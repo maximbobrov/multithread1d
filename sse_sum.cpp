@@ -131,14 +131,15 @@ void direct_wall(vec3 *bodyAccel_, vec4 *bodyPos_, int n) {
       dist.x = bodyPos_[i].x-(dx*j-0.5);
       dist.y = bodyPos_[i].y+0.15;
       dist.z = 0.0;//bodyPos_[i].z-wallP[j].z;
-      invDist = 1.0/sqrtf(dist.x*dist.x+dist.y*dist.y+eps);
-      invDistCube =10.0* BoundaryLayer[j]*invDist*invDist*invDist;
+      invDist = 1.0/sqrtf(dist.x*dist.x+dist.y*dist.y + 1e-14/*+eps*/);
+      invDistCube = bodyPos_[i].w * BoundaryLayer[j]*invDist*invDist*invDist;
       ai.x -= dist.x*invDistCube;
       ai.y -= dist.y*invDistCube;
       //ai.z -= dist.z*invDistCube;
     }
-    bodyAccel_[i].x += inv4PI*ai.x;
-    bodyAccel_[i].y += inv4PI*ai.y;
+    double e0 = 8.85e-12;
+    bodyAccel_[i].x += inv4PI*ai.x/e0;
+    bodyAccel_[i].y += inv4PI*ai.y/e0;
    // bodyAccel_[i].z += inv4PI*ai.z;
   }
 
@@ -153,15 +154,16 @@ void getEFromElectrons(vec3 &bodyAccel_, vec4 *bodyPos_, double x, double y, dou
         dist.x = bodyPos_[j].x-x;
         dist.y = bodyPos_[j].y-y;
         dist.z = bodyPos_[j].z-z;
-        invDist = 1.0/sqrtf(dist.x*dist.x+dist.y*dist.y+dist.z*dist.z+1e-43/*eps*/);
+        invDist = 1.0/sqrtf(dist.x*dist.x+dist.y*dist.y+dist.z*dist.z+1e-14/*eps*/);
         invDistCube = bodyPos_[j].w*invDist*invDist*invDist;
         ai.x -= dist.x*invDistCube;
         ai.y -= dist.y*invDistCube;
         ai.z -= dist.z*invDistCube;
       }
-      bodyAccel_.x = inv4PI*ai.x;
-      bodyAccel_.y = inv4PI*ai.y;
-      bodyAccel_.z = inv4PI*ai.z;
+      double e0 = 8.85e-12;
+      bodyAccel_.x = inv4PI*ai.x/e0;
+      bodyAccel_.y = inv4PI*ai.y/e0;
+      bodyAccel_.z = inv4PI*ai.z/e0;
 }
 
 // direct summation kernel
@@ -175,7 +177,7 @@ void direct(vec3 *bodyAccel_, vec4 *bodyPos_, vec3 *bodyVel_, int n) {
       dist.x = bodyPos_[i].x-bodyPos_[j].x;
       dist.y = bodyPos_[i].y-bodyPos_[j].y;
       dist.z = bodyPos_[i].z-bodyPos_[j].z;
-      invDist = 1.0/sqrtf(dist.x*dist.x+dist.y*dist.y+dist.z*dist.z+eps);
+      invDist = 1.0/sqrtf(dist.x*dist.x+dist.y*dist.y+dist.z*dist.z+1e-24/*+eps*/);
       invDistCube = bodyPos_[j].w*invDist*invDist*invDist;
       ai.x -= dist.x*invDistCube;
       ai.y -= dist.y*invDistCube;
@@ -192,10 +194,10 @@ void direct(vec3 *bodyAccel_, vec4 *bodyPos_, vec3 *bodyVel_, int n) {
       //ai.z -= dist.z*invDistCube;
     }*/
 
-
-    bodyAccel_[i].x = inv4PI*ai.x;
-    bodyAccel_[i].y = inv4PI*ai.y;
-    bodyAccel_[i].z = inv4PI*ai.z;
+    double e0 = 8.85e-12;
+    bodyAccel_[i].x = inv4PI*ai.x/e0;
+    bodyAccel_[i].y = inv4PI*ai.y/e0;
+    bodyAccel_[i].z = inv4PI*ai.z/e0;
   }
 
     direct_wall(bodyAccel_, bodyPos_, n);

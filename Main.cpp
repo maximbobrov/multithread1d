@@ -599,16 +599,17 @@ void create_random_particles(int threadIdx, vec4 *bodyPos_, vec3 *bodyVel_,vec3 
     for (int i=0;i<(N_Y-1) * 1.0 / 2;i++)
     {
         double t = 1.1;
-        double B = 100.0;
+        double B = 1.0;
         double x_ = - N_X * dx / 2;
         double y_ = i * dy - N_Y * dy / 4;
         double z_ = my_rand(threadIdx) * dz - dz / 2;
         //vec3 E = getE(x_, y_);
         vec3 E;
         getEFromElectrons(E, bodyPos_, x_, y_, z_, numParticles[threadIdx]);
-        //printf("Ex=%e Ey = %e\n", E.x, E.y);
+        printf("Ex=%e Ey = %e\n", E.x, E.y);
         E.x += Ex[0][i];
         E.y += Ey[0][i];
+        E.x = fmax(0.1, -E.x);
         //printf("Ex=%e Ey = %e\n", E.x, E.y);
         double phi = 4.0;
         double y = 3.79 * 1e-4 * sqrt(fabs(B * E.x)) / phi;
@@ -616,8 +617,8 @@ void create_random_particles(int threadIdx, vec4 *bodyPos_, vec3 *bodyVel_,vec3 
         double J = (1.54 * 1e-6 * B * B * E.x * E.x / (t * t * phi)) * exp( - 6.83 * 1e7 * pow(phi, 1.5) * tetta / fabs( B * E.x));
         //printf("JJJJ=%f jjj = %e E = %e \n",(dt * J * dy * dz * 1e-4 * 6.24151 * 1e18 / 1e5), J , E.x);
         int curNum = numParticles[threadIdx];
-        int numToAdd = std::min(int(dt * J * dy * dz * 1e-4 * 6.24151 * 1e18 / 1e6), maxParticles - numParticles[threadIdx]-2);
-        if(my_rand(threadIdx) < (dt * J * dy * dz * 1e-4 * 6.24151 * 1e18 / 1e6) - int(dt * J * dy * dz * 1e-4 * 6.24151 * 1e18 / 1e6))
+        int numToAdd = std::min(int(dt * J * dy * dz * 1e-4 * 6.24151 * 1e18 / 1e3), maxParticles - numParticles[threadIdx]-2);
+        if(my_rand(threadIdx) < (dt * J * dy * dz * 1e-4 * 6.24151 * 1e18 / 1e3) - int(dt * J * dy * dz * 1e-4 * 6.24151 * 1e18 / 1e3))
           numToAdd++;
         numParticles[threadIdx] += numToAdd;
         for (int n = curNum; n < curNum + numToAdd; ++n)
@@ -625,7 +626,7 @@ void create_random_particles(int threadIdx, vec4 *bodyPos_, vec3 *bodyVel_,vec3 
             bodyPos_[n].x=x_;
             bodyPos_[n].y=y_;
             bodyPos_[n].z=z_;
-            bodyPos_[n].w=1.6e-19 * 1e6;
+            bodyPos_[n].w=1.6e-19 * 1e3;
             double angle = 0.98*acos(1-2*my_rand(threadIdx)) - M_PI / 2;
             double en = 1.1e5;
             bodyVel_[n].x = en * cos(angle);
@@ -673,7 +674,7 @@ void wall_colision(int threadIdx, int particlesIdx, vec3 *bodyAccel_, vec4 *body
         if(my_rand(threadIdx) < (sigma - 1.0 * num))
             num++;
 
-        printf("eeee=%e num=%d \n",E,num);
+        //printf("eeee=%e num=%d \n",E,num);
 
 
         if(maxParticles - numParticles[threadIdx]> num)
@@ -762,12 +763,13 @@ void fmm_step(int threadIdx, vec3 *bodyAccel_, vec4 *bodyPos_, vec3 *bodyVel_, d
 
     //printf("aa = %f  bb = %f\n",randMin, randMax);
 
+    double q_over_m = 1.0;//1.6e-19/9.1e-31;
     for( i=0; i<numParticles[threadIdx]; i++ )
     {
         vec3 ev=getE(bodyPos_[i].x,bodyPos_[i].y);
-        bodyVel_[i].x -= -5e-7*ev.x +40.0*dt*bodyAccel_[i].x;
-        bodyVel_[i].y -= -5e-7*ev.y +40.0*dt*bodyAccel_[i].y;
-        bodyVel_[i].z -=20.0*dt*bodyAccel_[i].z;
+        bodyVel_[i].x -= -dt*q_over_m*(ev.x+ bodyAccel_[i].x);
+        bodyVel_[i].y -= -dt*q_over_m*(ev.y +bodyAccel_[i].y);
+        bodyVel_[i].z -= dt*bodyAccel_[i].z;
         /*bodyVel_[i].x *= 0.9995;
         bodyVel_[i].y *= 0.9995;
         bodyVel_[i].z *= 0.9995;*/
