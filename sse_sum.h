@@ -56,6 +56,7 @@ extern vec3 *bodyVelCommon;
 extern double tic,t[9];
 double get_time(void);
  void direct(vec3 *bodyAccel_, vec4 *bodyPos_, vec3 *bodyVel_, int numParticles);
+ void getEFromElectrons(vec3 &bodyAccel_, vec4 *bodyPos_, double x, double y, double z, int n);
 
 
 

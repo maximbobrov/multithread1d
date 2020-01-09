@@ -2,10 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//#include <my_include/gl.h>
-//#include <my_include/glu.h>
-//#include <my_include/glut.h>
-#include <GL/glut.h>
+
+#include <my_include/gl.h>
+#include <my_include/glu.h>
+#include <my_include/glut.h>
+//#include <GL/glut.h>
 #include  <math.h>
 #include <time.h>
 #include "globals.h"
@@ -155,9 +156,11 @@ void filter_conv(int n,int nf, FILE* file,bool write)
 
 void display(void)
 {
+
+    double sc = 0.4e6;
     if (redr==1)
     {
-      /*    std::vector <std::thread> th_vec;
+        /*    std::vector <std::thread> th_vec;
         for (int i = 0; i < num_thread; ++i)
         {
             th_vec.push_back(std::thread(fmm_step,i , bodyAccel[i], bodyPos[i], bodyVel[i],dt));
@@ -242,7 +245,7 @@ glVertex2f((i-50)/100.0*1.15,0.2+conv[i]*0.35);
                 l_2=ck*(field_Uy[i][j]);
             */
             glColor3f(l_2,l_2,-l_2);
-            glVertex2f(dx*(i-N_X/2),dy*(j-N_Y/2));
+            glVertex2f(sc*dx*(i-N_X/2),sc*dy*(j-N_Y/2));
 
 
 
@@ -264,7 +267,7 @@ glVertex2f((i-50)/100.0*1.15,0.2+conv[i]*0.35);
                 l_2=ck*(field_Uy[i+1][j]);
 */
             glColor3f(l_2,l_2,-l_2);
-            glVertex2f(dx*(i+1-N_X/2),dy*(j-N_Y/2));
+            glVertex2f(sc*dx*(i+1-N_X/2),sc*dy*(j-N_Y/2));
         }
 
 
@@ -299,21 +302,20 @@ glVertex2f((i-50)/100.0*1.15,0.2+conv[i]*0.35);
             j=jj*8+1;
 
             glColor3f(1,1,1);
-            glVertex2f(dx*(i-N_X/2),dy*(j-N_Y/2));
-
+            glVertex2f(sc*dx*(i-N_X/2),sc*dy*(j-N_Y/2));
 
 
             glColor3f(0.5,0.5,0.5);
-            if (view_v==VIEW_JX)  glVertex2f(dx*(i-N_X/2)+cv*Jx_[i][j], dy*(j-N_Y/2)+cv*Jy_[i][j]);
-            if (view_v==VIEW_UX)  glVertex2f(dx*(i-N_X/2)+cv*Ux_[i][j], dy*(j-N_Y/2)+cv*Uy_[i][j]);
+            if (view_v==VIEW_JX)  glVertex2f(sc*dx*(i-N_X/2)+cv*Jx_[i][j], sc*dy*(j-N_Y/2)+cv*Jy_[i][j]);
+            if (view_v==VIEW_UX)  glVertex2f(sc*dx*(i-N_X/2)+cv*Ux_[i][j], sc*dy*(j-N_Y/2)+cv*Uy_[i][j]);
         }
         glEnd();
     }
 
-   // glEnable(GL_BLEND);
+    // glEnable(GL_BLEND);
 
-   // glEnable(GL_POINT_SMOOTH);
- glPointSize(3.0);
+    // glEnable(GL_POINT_SMOOTH);
+    glPointSize(3.0);
 
     /*for( i=0; i<numParticles; i++ ) {
         bodyAccelCommon[i].x = 0;
@@ -396,15 +398,15 @@ glVertex2f((i-50)/100.0*1.15,0.2+conv[i]*0.35);
         glColor3f(ck*(BoundaryLayer[i]),-ck*(BoundaryLayer[i]),0);
         j = 0;
         glBegin(GL_QUADS);
-        glVertex3f(i*dx + dx*(-N_X/2),j*dy + dy*(-N_Y/2),0);
-        glVertex3f((i+1)*dx + dx*(-N_X/2),j*dy + dy*(-N_Y/2),0);
-        glVertex3f((i+1)*dx + dx*(-N_X/2),(j-3)*dy + dy*(-N_Y/2),0);
-        glVertex3f(i*dx + dx*(-N_X/2),(j-3)*dy + dy*(-N_Y/2),0);
+        glVertex3f(sc*(i*dx + dx*(-N_X/2)),sc*(j*dy + dy*(-N_Y/2)),0);
+        glVertex3f(sc*((i+1)*dx + dx*(-N_X/2)),sc*(j*dy + dy*(-N_Y/2)),0);
+        glVertex3f(sc*((i+1)*dx + dx*(-N_X/2)),sc*((j-3)*dy + dy*(-N_Y/2)),0);
+        glVertex3f(sc*(i*dx + dx*(-N_X/2)),sc*((j-3)*dy + dy*(-N_Y/2)),0);
 
         glEnd();
     }
 
-    glPointSize(5);
+    glPointSize(1);
 
     glBegin(GL_POINTS);
 
@@ -414,7 +416,7 @@ glVertex2f((i-50)/100.0*1.15,0.2+conv[i]*0.35);
         for( i=0; i<numParticles[k]; i++ ) {
 
             glColor3f(fabs(bodyVel[k][i].x)/400.0,fabs(bodyVel[k][i].y)/400.0,fabs(bodyVel[k][i].z)/400.0);
-            glVertex3f(bodyPos[k][i].x,bodyPos[k][i].y,bodyPos[k][i].z);
+            glVertex3f(sc*bodyPos[k][i].x,sc*bodyPos[k][i].y,sc*bodyPos[k][i].z);
             //glColor3f(fabs(bodyVel[0][i].x)/400.0,fabs(bodyVel[0][i].y)/400.0,fabs(bodyVel[0][i].z)/400.0);
             //glVertex3f(bodyPos[0][i].x,bodyPos[0][i].y,bodyPos[0][i].z);
 
@@ -428,10 +430,10 @@ glVertex2f((i-50)/100.0*1.15,0.2+conv[i]*0.35);
 
     glBegin(GL_LINE_LOOP);
 
-    glVertex3f(dx*(-N_X/2),dy*(-N_Y/2),0);
-    glVertex3f(dx*(N_X-1-N_X/2),dy*(-N_Y/2),0);
-    glVertex3f(dx*(N_X-1-N_X/2),dy*(N_Y-1-N_Y/2),0);
-    glVertex3f(dx*(-N_X/2),dy*(N_Y-1-N_Y/2),0);
+    glVertex3f(sc*dx*(-N_X/2),sc*dy*(-N_Y/2),0);
+    glVertex3f(sc*dx*(N_X-1-N_X/2),sc*dy*(-N_Y/2),0);
+    glVertex3f(sc*dx*(N_X-1-N_X/2),sc*dy*(N_Y-1-N_Y/2),0);
+    glVertex3f(sc*dx*(-N_X/2),sc*dy*(N_Y-1-N_Y/2),0);
     glEnd();
 
 
@@ -492,15 +494,15 @@ void m_d(int button, int state,int x, int y)  //mouse down
 
 int iglob=0;
 
-double w_x0=-0.5;
-double w_x1=0.5;
+double w_x0=-dx * N_X /2;
+double w_x1=dx * N_X /2;
 
 
-double w_y0=-0.15;
-double w_y1=0.15;
+double w_y0=-dy * N_Y /2;
+double w_y1=dy * N_Y /2;
 
-double w_z0=-0.015;
-double w_z1=0.015;
+double w_z0=-dz/2;
+double w_z1=dz/2;
 
 //FmmSystem tre;
 
@@ -550,9 +552,9 @@ vec3 getE(float x, float y)
 vec4 init_pos(int threadIdx)
 {
     vec4 res;
-    res.x = -0.5;
-    res.y = my_rand(threadIdx)*0.05-0.1;
-    res.z = my_rand(threadIdx)*0.05-0.025;
+    res.x = dx * N_X / 2;
+    res.y = my_rand(threadIdx)*dy * N_Y-dy * N_Y / 2;
+    res.z = my_rand(threadIdx)*dz - dz / 2;
     res.w = 150;//my_rand(threadIdx);
 
 
@@ -578,7 +580,7 @@ vec3 init_vel(int threadIdx)
 
 void create_random_particles(int threadIdx, vec4 *bodyPos_, vec3 *bodyVel_,vec3 *bodyAccel_)
 {
-    int curNum = numParticles[threadIdx];
+    /*int curNum = numParticles[threadIdx];
     int numToAdd = std::min(int(my_rand(threadIdx) * 2.0), maxParticles - numParticles[threadIdx]-1);
     numParticles[threadIdx] += numToAdd;
     for (int i = curNum; i < curNum + numToAdd; ++i)
@@ -593,6 +595,46 @@ void create_random_particles(int threadIdx, vec4 *bodyPos_, vec3 *bodyVel_,vec3 
         bodyAccel_[i].x=0.0;
         bodyAccel_[i].y=0.0;
         bodyAccel_[i].z=0.0;
+    }*/
+    for (int i=0;i<(N_Y-1) * 1.0 / 2;i++)
+    {
+        double t = 1.1;
+        double B = 100.0;
+        double x_ = - N_X * dx / 2;
+        double y_ = i * dy - N_Y * dy / 4;
+        double z_ = my_rand(threadIdx) * dz - dz / 2;
+        //vec3 E = getE(x_, y_);
+        vec3 E;
+        getEFromElectrons(E, bodyPos_, x_, y_, z_, numParticles[threadIdx]);
+        //printf("Ex=%e Ey = %e\n", E.x, E.y);
+        E.x += Ex[0][i];
+        E.y += Ey[0][i];
+        //printf("Ex=%e Ey = %e\n", E.x, E.y);
+        double phi = 4.0;
+        double y = 3.79 * 1e-4 * sqrt(fabs(B * E.x)) / phi;
+        double tetta = 0.95 - 1.03 * y * y;
+        double J = (1.54 * 1e-6 * B * B * E.x * E.x / (t * t * phi)) * exp( - 6.83 * 1e7 * pow(phi, 1.5) * tetta / fabs( B * E.x));
+        //printf("JJJJ=%f jjj = %e E = %e \n",(dt * J * dy * dz * 1e-4 * 6.24151 * 1e18 / 1e5), J , E.x);
+        int curNum = numParticles[threadIdx];
+        int numToAdd = std::min(int(dt * J * dy * dz * 1e-4 * 6.24151 * 1e18 / 1e6), maxParticles - numParticles[threadIdx]-2);
+        if(my_rand(threadIdx) < (dt * J * dy * dz * 1e-4 * 6.24151 * 1e18 / 1e6) - int(dt * J * dy * dz * 1e-4 * 6.24151 * 1e18 / 1e6))
+          numToAdd++;
+        numParticles[threadIdx] += numToAdd;
+        for (int n = curNum; n < curNum + numToAdd; ++n)
+        {
+            bodyPos_[n].x=x_;
+            bodyPos_[n].y=y_;
+            bodyPos_[n].z=z_;
+            bodyPos_[n].w=1.6e-19 * 1e6;
+            double angle = 0.98*acos(1-2*my_rand(threadIdx)) - M_PI / 2;
+            double en = 1.1e5;
+            bodyVel_[n].x = en * cos(angle);
+            bodyVel_[n].y = en * sin(angle);
+            bodyVel_[n].z = 0;
+            bodyAccel_[n].x=0.0;
+            bodyAccel_[n].y=0.0;
+            bodyAccel_[n].z=0.0;
+        }
     }
 }
 
@@ -631,7 +673,7 @@ void wall_colision(int threadIdx, int particlesIdx, vec3 *bodyAccel_, vec4 *body
         if(my_rand(threadIdx) < (sigma - 1.0 * num))
             num++;
 
-         printf("eeee=%e num=%d \n",E,num);
+        printf("eeee=%e num=%d \n",E,num);
 
 
         if(maxParticles - numParticles[threadIdx]> num)
@@ -644,7 +686,7 @@ void wall_colision(int threadIdx, int particlesIdx, vec3 *bodyAccel_, vec4 *body
             {
 
                 bodyPos_[i].x= bodyPos_[particlesIdx].x+3.0*(my_rand(threadIdx)*dx*2-dx);
-                bodyPos_[i].y= -0.15+0.001;//bodyPos_[particlesIdx].y;
+                bodyPos_[i].y= bodyPos_[particlesIdx].y;
                 bodyPos_[i].z= bodyPos_[particlesIdx].z+3.0*(my_rand(threadIdx)*dx*2-dx);
                 bodyPos_[i].w= bodyPos_[particlesIdx].w;
                 double angleNew = 0.98*acos(1-2*my_rand(threadIdx))+0.01*M_PI;
@@ -723,8 +765,8 @@ void fmm_step(int threadIdx, vec3 *bodyAccel_, vec4 *bodyPos_, vec3 *bodyVel_, d
     for( i=0; i<numParticles[threadIdx]; i++ )
     {
         vec3 ev=getE(bodyPos_[i].x,bodyPos_[i].y);
-        bodyVel_[i].x -= -0.006*ev.x +40.0*dt*bodyAccel_[i].x;
-        bodyVel_[i].y -= -0.006*ev.y +40.0*dt*bodyAccel_[i].y;
+        bodyVel_[i].x -= -5e-7*ev.x +40.0*dt*bodyAccel_[i].x;
+        bodyVel_[i].y -= -5e-7*ev.y +40.0*dt*bodyAccel_[i].y;
         bodyVel_[i].z -=20.0*dt*bodyAccel_[i].z;
         /*bodyVel_[i].x *= 0.9995;
         bodyVel_[i].y *= 0.9995;
@@ -1143,7 +1185,7 @@ int main(int argc, char** argv)
     {
         fprintf(f,"%f %f %f\n",i*9.0/200,delta_f(i*9.0/200,0.0),delta2_f(i*9.0/200,0.0));
     }
-        fclose(f);
+    fclose(f);
 
     srand(time(NULL));
     glutInit(&argc,argv);

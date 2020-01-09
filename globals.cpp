@@ -37,11 +37,12 @@ double Re=30.0;
  float* body_x, *body_y, *body_z;
 double OMEGA=0.1;
 
-double dx=1.0/N_X;
-double dy=0.3/N_Y;
+double dx=2.5e-6/N_X;
+double dy=0.5e-6/N_Y;
+double dz=0.1e-6;
 double U=1.0;
 
-double dt=1e-10;
+double dt=1e-13;
 double D=0.01;
 double b= 0.8;
 double nu= 17.9*10e-6;

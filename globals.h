@@ -80,6 +80,7 @@ extern double p_in_y[N_X][N_Y];
 
 extern  double dx;
 extern  double dy;
+extern  double dz;
 extern double U;
 
 
